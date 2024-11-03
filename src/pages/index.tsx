@@ -1,3 +1,6 @@
+import localFont from "next/font/local";
+import { useEffect, useState } from "react";
+
 import { LigthButton } from "@/components/ligth-button";
 import {
   GameState,
@@ -5,8 +8,6 @@ import {
   LigthButtonPosition,
   LigthButtonState,
 } from "@/types";
-import localFont from "next/font/local";
-import { useEffect, useState } from "react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
