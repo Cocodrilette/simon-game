@@ -1,7 +1,12 @@
 import { LigthButton } from "@/components/ligth-button";
-import { GameState, LigthButtonPosition, LigthButtonState } from "@/types";
+import {
+  GameState,
+  LigthButtonColor,
+  LigthButtonPosition,
+  LigthButtonState,
+} from "@/types";
 import localFont from "next/font/local";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -17,11 +22,33 @@ const geistMono = localFont({
 export default function Home() {
   const [level, setLevel] = useState(0);
   const [gameState, setGameState] = useState(GameState.Off);
+  const [currentPattern, setCurrentPattern] = useState<LigthButtonColor[]>([]);
+  const [userPattern, setUserPattern] = useState<LigthButtonColor[]>([]);
+  const [buttonState, setButtonState] = useState({
+    yellow: LigthButtonState.Off,
+    red: LigthButtonState.Off,
+    blue: LigthButtonState.Off,
+    green: LigthButtonState.Off,
+  });
 
   const buttonColorSchema =
     gameState !== GameState.Off && gameState !== GameState.Lost
       ? "bg-slate-200 border-gray-300 text-gray-300"
       : "bg-slate-100 border-gray-300 hover:bg-slate-200 hover:border-gray-400 text-black";
+
+  useEffect(() => {
+    if (gameState === GameState.ShowingPattern) {
+    } else if (gameState === GameState.UserTrying) {
+    } else if (gameState === GameState.Lost) {
+    } else {
+    }
+  }, [gameState]);
+
+  function handlePlayButtonClick() {
+    if (gameState === GameState.Off || gameState === GameState.Lost) {
+      setGameState(GameState.ShowingPattern);
+    }
+  }
 
   return (
     <div
@@ -38,37 +65,33 @@ export default function Home() {
         <div className="bg-white p-1 gap-1 rounded-full grid grid-cols-2 grid-rows-2 border-2 border-gray-300">
           <LigthButton
             color="yellow"
-            state={LigthButtonState.Off}
+            state={buttonState.yellow}
             position={LigthButtonPosition.TopLeft}
-            mouseCanActivate={false}
+            mouseCanActivate={gameState === GameState.UserTrying}
           />
           <LigthButton
             color="red"
-            state={LigthButtonState.Off}
+            state={buttonState.red}
             position={LigthButtonPosition.TopRight}
-            mouseCanActivate={true}
+            mouseCanActivate={gameState === GameState.UserTrying}
           />
           <LigthButton
             color="green"
-            state={LigthButtonState.Off}
+            state={buttonState.green}
             position={LigthButtonPosition.BottomLeft}
-            mouseCanActivate={true}
+            mouseCanActivate={gameState === GameState.UserTrying}
           />
           <LigthButton
             color="blue"
-            state={LigthButtonState.Off}
+            state={buttonState.blue}
             position={LigthButtonPosition.BottomRight}
-            mouseCanActivate={true}
+            mouseCanActivate={gameState === GameState.UserTrying}
           />
         </div>
 
         <div className="mt-20 ">
           <button
-            onClick={() => {
-              if (gameState === GameState.Off || gameState === GameState.Lost) {
-                setGameState(GameState.ShowingPattern);
-              }
-            }}
+            onClick={handlePlayButtonClick}
             className={`px-10 py-1 text-lg border-4 ${buttonColorSchema}`}
             disabled={
               gameState !== GameState.Off && gameState !== GameState.Lost

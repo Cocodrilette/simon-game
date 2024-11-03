@@ -38,16 +38,8 @@ export function LigthButton({
 
   return (
     <div
-      onMouseEnter={() =>
-        mouseCanActivate &&
-        setCurrentColorSchema(colorSchema[LigthButtonState.On])
-      }
-      onMouseLeave={() =>
-        mouseCanActivate &&
-        setCurrentColorSchema(colorSchema[LigthButtonState.Off])
-      }
       onClick={() => {
-        !mouseCanActivate &&
+        mouseCanActivate &&
           setCurrentColorSchema(colorSchema[LigthButtonState.On]);
         setTimeout(
           () => setCurrentColorSchema(colorSchema[LigthButtonState.Off]),
