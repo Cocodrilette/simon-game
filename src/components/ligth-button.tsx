@@ -29,7 +29,7 @@ export function LigthButton({
   setUserPattern: UseStateSetter<LigthButtonColor[]>;
 }) {
   const colorSchema = {
-    [LigthButtonState.On]: `bg-${color}-300 border-${color}-300 shadow-${color}-200`,
+    [LigthButtonState.On]: `bg-${color}-200 border-${color}-300 shadow-${color}-200`,
     [LigthButtonState.Off]: `border-${color}-500 bg-${color}-400`,
   };
 

@@ -40,6 +40,8 @@ export default function Home() {
       : "bg-slate-100 border-gray-300 hover:bg-slate-200 hover:border-gray-400 text-black";
 
   const updateCurrentPattern = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     if (level === 0) {
       setLevel(1);
       const initialPattern = [
@@ -61,16 +63,25 @@ export default function Home() {
 
   const showPattern = async (pattern: LigthButtonColor[]) => {
     for (const color of pattern) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      setButtonState({
+        yellow: LigthButtonState.Off,
+        red: LigthButtonState.Off,
+        blue: LigthButtonState.Off,
+        green: LigthButtonState.Off,
+      });
       setButtonState((prevButtonState) => ({
         ...prevButtonState,
         [color]: LigthButtonState.On,
       }));
+
       await new Promise((resolve) => setTimeout(resolve, 500));
-      setButtonState((prevButtonState) => ({
-        ...prevButtonState,
-        [color]: LigthButtonState.Off,
-      }));
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      setButtonState({
+        yellow: LigthButtonState.Off,
+        red: LigthButtonState.Off,
+        blue: LigthButtonState.Off,
+        green: LigthButtonState.Off,
+      });
     }
     setGameState(GameState.UserTrying);
     setRemainingTime(pattern.length * 5); // Set the remaining time based on the pattern length
