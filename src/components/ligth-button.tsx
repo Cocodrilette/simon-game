@@ -18,6 +18,8 @@ export function LigthButton({
   state,
   position,
   mouseCanActivate,
+  userPattern,
+  setUserPattern,
 }: {
   color: LigthButtonColor;
   state: LigthButtonState;
@@ -39,16 +41,28 @@ export function LigthButton({
     setCurrentColorSchema(colorSchema[state]);
   }, [state]);
 
+  function turnOn() {
+    setCurrentColorSchema(colorSchema[LigthButtonState.On]);
+    setTimeout(
+      () => setCurrentColorSchema(colorSchema[LigthButtonState.Off]),
+      500
+    );
+  }
+
+  function handleUserSelection() {
+    setUserPattern([...userPattern, color]);
+  }
+
+  function handleClick() {
+    if (mouseCanActivate) {
+      handleUserSelection();
+      turnOn();
+    }
+  }
+
   return (
     <div
-      onClick={() => {
-        mouseCanActivate &&
-          setCurrentColorSchema(colorSchema[LigthButtonState.On]);
-        setTimeout(
-          () => setCurrentColorSchema(colorSchema[LigthButtonState.Off]),
-          500
-        );
-      }}
+      onClick={handleClick}
       className={`w-40 h-40 border-2 ${positionRounding[position]} ${currentColorSchema}`}
     />
   );

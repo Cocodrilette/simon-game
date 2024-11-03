@@ -39,6 +39,7 @@ export default function Home() {
 
   useEffect(() => {
     if (gameState === GameState.ShowingPattern) {
+      setGameState(GameState.UserTrying);
     } else if (gameState === GameState.UserTrying) {
     } else if (gameState === GameState.Lost) {
     } else {
@@ -49,6 +50,13 @@ export default function Home() {
     if (gameState === GameState.Off || gameState === GameState.Lost) {
       setGameState(GameState.ShowingPattern);
     }
+
+    if (gameState === GameState.Lost) {
+      setLevel(0);
+      setGameState(GameState.ShowingPattern);
+      setUserPattern([]);
+      setCurrentPattern([]);
+    }
   }
 
   return (
@@ -57,12 +65,18 @@ export default function Home() {
     >
       <main className="flex flex-col row-start-2 items-center">
         <p
-          className={`mb-20 text-xl ${
+          className={`text-xl mb-5 ${
             gameState === GameState.Off ? "text-gray-500" : "text-white"
           }`}
         >
           Level {level}
         </p>
+        <div className="flex flex-wrap gap-0.5 mb-10 h-16">
+          {/* @todo deactivate this when add level selection */}
+          {userPattern.map((c, index) => {
+            return <div className={`bg-${c}-400 w-5 h-5`} key={index} />;
+          })}
+        </div>
         <div className="bg-white p-1 gap-1 rounded-full grid grid-cols-2 grid-rows-2 border-2 border-gray-300">
           <LigthButton
             color="yellow"
@@ -98,7 +112,7 @@ export default function Home() {
           />
         </div>
 
-        <div className="mt-20 ">
+        <div className="mt-10 ">
           <button
             onClick={handlePlayButtonClick}
             className={`px-10 py-1 text-lg border-4 ${buttonColorSchema}`}

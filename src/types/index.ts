@@ -21,6 +21,7 @@ export enum LigthButtonPosition {
 export enum GameState {
   ShowingPattern = "showing-pattern",
   UserTrying = "user-traying",
+  Win = "win",
   Off = "off",
   Lost = "lost",
 }
