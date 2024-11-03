@@ -15,3 +15,10 @@ export enum LigthButtonPosition {
   BottomRight = "bottom-right",
   BottomLeft = "bottom-left",
 }
+
+export enum GameState {
+  ShowingPattern = "showing-pattern",
+  UserTrying = "user-traying",
+  Off = "off",
+  Lost = "lost",
+}
