@@ -8,6 +8,7 @@ import {
   LigthButtonPosition,
   LigthButtonState,
 } from "@/types";
+import { generateRandomColor } from "@/utils";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,20 +32,100 @@ export default function Home() {
     blue: LigthButtonState.Off,
     green: LigthButtonState.Off,
   });
+  const [remainingTime, setRemainingTime] = useState(0);
 
   const buttonColorSchema =
     gameState !== GameState.Off && gameState !== GameState.Lost
       ? "bg-slate-200 border-gray-300 text-gray-300"
       : "bg-slate-100 border-gray-300 hover:bg-slate-200 hover:border-gray-400 text-black";
 
+  const updateCurrentPattern = async () => {
+    if (level === 0) {
+      setLevel(1);
+      const initialPattern = [
+        generateRandomColor(),
+        generateRandomColor(),
+        generateRandomColor(),
+      ];
+      setCurrentPattern(initialPattern);
+      await showPattern(initialPattern);
+    } else {
+      setLevel((prevLevel) => prevLevel + 1);
+      setCurrentPattern((prevPattern) => {
+        const newPattern = [...prevPattern, generateRandomColor()];
+        showPattern(newPattern);
+        return newPattern;
+      });
+    }
+  };
+
+  const showPattern = async (pattern: LigthButtonColor[]) => {
+    for (const color of pattern) {
+      setButtonState((prevButtonState) => ({
+        ...prevButtonState,
+        [color]: LigthButtonState.On,
+      }));
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      setButtonState((prevButtonState) => ({
+        ...prevButtonState,
+        [color]: LigthButtonState.Off,
+      }));
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
+    setGameState(GameState.UserTrying);
+    setRemainingTime(pattern.length * 5); // Set the remaining time based on the pattern length
+  };
+
   useEffect(() => {
     if (gameState === GameState.ShowingPattern) {
-      setGameState(GameState.UserTrying);
-    } else if (gameState === GameState.UserTrying) {
-    } else if (gameState === GameState.Lost) {
-    } else {
+      updateCurrentPattern();
     }
   }, [gameState]);
+
+  useEffect(() => {
+    if (gameState === GameState.Lost) {
+      setLevel(0);
+    }
+  }, [gameState]);
+
+  useEffect(() => {
+    if (gameState === GameState.UserTrying) {
+      const timer = setInterval(() => {
+        setRemainingTime((prevTime) => {
+          if (prevTime <= 1) {
+            clearInterval(timer);
+            checkUserPattern();
+            return 0;
+          }
+          return prevTime - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [gameState]);
+
+  const checkUserPattern = () => {
+    if (userPattern.length === currentPattern.length) {
+      if (JSON.stringify(userPattern) === JSON.stringify(currentPattern)) {
+        setGameState(GameState.ShowingPattern);
+        setUserPattern([]);
+      } else {
+        setGameState(GameState.Lost);
+      }
+    } else {
+      setGameState(GameState.Lost);
+    }
+  };
+
+  useEffect(() => {
+    if (
+      currentPattern.length > 0 &&
+      userPattern.length === currentPattern.length
+    ) {
+      checkUserPattern();
+    }
+  }, [userPattern]);
 
   function handlePlayButtonClick() {
     if (gameState === GameState.Off || gameState === GameState.Lost) {
@@ -52,7 +133,6 @@ export default function Home() {
     }
 
     if (gameState === GameState.Lost) {
-      setLevel(0);
       setGameState(GameState.ShowingPattern);
       setUserPattern([]);
       setCurrentPattern([]);
@@ -120,8 +200,13 @@ export default function Home() {
               gameState !== GameState.Off && gameState !== GameState.Lost
             }
           >
-            Play
+            {gameState === GameState.Off ? "Play" : "Reset"}
           </button>
+        </div>
+        <div className="h-10">
+          {gameState === GameState.UserTrying && (
+            <p className="mt-5 text-white">Time left: {remainingTime}s</p>
+          )}
         </div>
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center"></footer>
