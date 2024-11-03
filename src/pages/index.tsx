@@ -69,24 +69,32 @@ export default function Home() {
             state={buttonState.yellow}
             position={LigthButtonPosition.TopLeft}
             mouseCanActivate={gameState === GameState.UserTrying}
+            userPattern={userPattern}
+            setUserPattern={setUserPattern}
           />
           <LigthButton
             color="red"
             state={buttonState.red}
             position={LigthButtonPosition.TopRight}
             mouseCanActivate={gameState === GameState.UserTrying}
+            userPattern={userPattern}
+            setUserPattern={setUserPattern}
           />
           <LigthButton
             color="green"
             state={buttonState.green}
             position={LigthButtonPosition.BottomLeft}
             mouseCanActivate={gameState === GameState.UserTrying}
+            userPattern={userPattern}
+            setUserPattern={setUserPattern}
           />
           <LigthButton
             color="blue"
             state={buttonState.blue}
             position={LigthButtonPosition.BottomRight}
             mouseCanActivate={gameState === GameState.UserTrying}
+            userPattern={userPattern}
+            setUserPattern={setUserPattern}
           />
         </div>
 

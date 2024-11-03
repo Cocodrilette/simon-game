@@ -2,6 +2,7 @@ import {
   LigthButtonColor,
   LigthButtonPosition,
   LigthButtonState,
+  UseStateSetter,
 } from "@/types";
 import { useEffect, useState } from "react";
 
@@ -22,6 +23,8 @@ export function LigthButton({
   state: LigthButtonState;
   position: LigthButtonPosition;
   mouseCanActivate: boolean;
+  userPattern: LigthButtonColor[];
+  setUserPattern: UseStateSetter<LigthButtonColor[]>;
 }) {
   const colorSchema = {
     [LigthButtonState.On]: `bg-${color}-300 border-${color}-300 shadow-${color}-200`,

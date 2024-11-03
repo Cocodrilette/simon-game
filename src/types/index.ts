@@ -2,6 +2,8 @@
  * LightButton
  */
 
+import { Dispatch, SetStateAction } from "react";
+
 export type LigthButtonColor = "yellow" | "red" | "blue" | "green";
 
 export enum LigthButtonState {
@@ -22,3 +24,5 @@ export enum GameState {
   Off = "off",
   Lost = "lost",
 }
+
+export type UseStateSetter<T> = Dispatch<SetStateAction<T>>;
