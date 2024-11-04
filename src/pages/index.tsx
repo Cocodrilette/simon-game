@@ -17,6 +17,20 @@ const geistMono = localFont({
 
 // const MAX_LEVEL = 32;
 const COLORS: LigthButtonColor[] = ["red", "green", "yellow", "blue"];
+/**
+ * Time in ms to wait for the user to click the buttons for each level
+ * @todo Implement this
+ * @todo Can be a function of the level
+ */
+const TIME = 5000;
+/**
+ * Time in ms to show a color button on
+ */
+const ON_TIME = 700;
+/**
+ * Time in ms to wait for the next level to start
+ */
+const WAIT_TIME = 1000;
 
 export default function Home() {
   const [level, setLevel] = useState(0);
@@ -64,9 +78,9 @@ export default function Home() {
     setUserPattern([]);
 
     for (let i = 0; i < currentPattern.length; i++) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, WAIT_TIME));
       setButtonState((prev) => ({ ...prev, [currentPattern[i]]: true }));
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, ON_TIME));
       setButtonState((prev) => ({ ...prev, [currentPattern[i]]: false }));
     }
 
@@ -99,9 +113,9 @@ export default function Home() {
 
     buttonStateOff();
     setButtonState((prev) => ({ ...prev, [color]: true }));
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, ON_TIME));
     buttonStateOff();
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, ON_TIME));
   }
 
   useEffect(() => {
@@ -138,7 +152,7 @@ export default function Home() {
           })}
         </div>
         <div className="flex flex-col items-center justify-center gap-5">
-          <div className="bg-white p-1 gap-1 rounded-full grid grid-cols-2 grid-rows-2 border-2 border-gray-300">
+          <div className="bg-slate-300 shadow-md p-2 gap-1 rounded-full grid grid-cols-2 grid-rows-2 border-2 border-gray-400">
             <LigthButton
               position="tl"
               color="yellow"
@@ -172,14 +186,14 @@ export default function Home() {
               }
             />
           </div>
-          <p className="text-gray-700">Remaining Time 0s</p>
+          <p className="text-gray-700 h-5"></p>
         </div>
         <button
           disabled={gameState !== GameState.Off && gameState !== GameState.Lost}
           onClick={() => {
             setGameState(GameState.ShowingPattern);
           }}
-          className="px-10 py-2 mt-5 bg-slate-300 text-black disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-10 py-2 mt-5 shadow-md bg-slate-300 text-black border disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Start
         </button>

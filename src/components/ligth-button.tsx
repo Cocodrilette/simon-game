@@ -13,9 +13,12 @@ export function LigthButton({
   onClick: () => void;
 }) {
   useEffect(() => {
+    const audio = new Audio(`/sounds/${color}.mp3`);
     if (isActive) {
-      const audio = new Audio(`/sounds/${color}.mp3`);
       audio.play();
+    } else {
+      audio.pause();
+      audio.currentTime = 0;
     }
   }, [isActive, color]);
 
@@ -24,7 +27,7 @@ export function LigthButton({
       {" "}
       <button
         onClick={() => onClick()}
-        className={`w-36 md:w-56 h-36 md:h-56 border-2 ${
+        className={`w-36 md:w-56 h-36 md:h-56 border-2 m-1 ${
           isActive ? `${color}-active` : `${color}-base`
         } ${position}`}
       ></button>
