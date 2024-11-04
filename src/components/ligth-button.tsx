@@ -1,30 +1,33 @@
-import {
-  LigthButtonColor,
-  LigthButtonPosition,
-  LigthButtonState,
-  UseStateSetter,
-} from "@/types";
-import { useEffect, useState } from "react";
+import { LigthButtonColor, LigthButtonPosition } from "@/types";
+import { useEffect } from "react";
 
 export function LigthButton({
   color,
   position,
   isActive,
+  onClick,
 }: {
   color: LigthButtonColor;
   position: LigthButtonPosition;
   isActive: boolean;
+  onClick: () => void;
 }) {
-  const colorSchema = {
-    [LigthButtonState.On]: `bg-${color}-200 border-${color}-300 shadow-${color}-200`,
-    [LigthButtonState.Off]: `border-${color}-500 bg-${color}-400`,
-  };
+  useEffect(() => {
+    if (isActive) {
+      const audio = new Audio(`/sounds/${color}.mp3`);
+      audio.play();
+    }
+  }, [isActive, color]);
 
   return (
-    <button
-      className={`w-36 md:w-56 h-36 md:h-56 border-2 ${
-        isActive ? `${color}-active` : `${color}-base`
-      } ${position}`}
-    ></button>
+    <>
+      {" "}
+      <button
+        onClick={() => onClick()}
+        className={`w-36 md:w-56 h-36 md:h-56 border-2 ${
+          isActive ? `${color}-active` : `${color}-base`
+        } ${position}`}
+      ></button>
+    </>
   );
 }

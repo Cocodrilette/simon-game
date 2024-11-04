@@ -1,5 +1,6 @@
 import { LigthButton } from "@/components/ligth-button";
-import { LigthButtonColor } from "@/types";
+import { GameState, LigthButtonColor } from "@/types";
+import { getRandomInt } from "@/utils";
 import localFont from "next/font/local";
 import { useEffect, useState } from "react";
 
@@ -15,8 +16,15 @@ const geistMono = localFont({
 });
 
 const MAX_LEVEL = 32;
+const COLORS: LigthButtonColor[] = ["red", "green", "yellow", "blue"];
 
 export default function Home() {
+  const [level, setLevel] = useState(0);
+  const [gameState, setGameState] = useState(GameState.Off);
+
+  const [userPattern, setUserPattern] = useState<LigthButtonColor[]>([]);
+  const [pattern, setPattern] = useState<LigthButtonColor[]>([]);
+
   const [buttonState, setButtonState] = useState<{
     [LigthButtonColor: string]: boolean;
   }>({
@@ -26,52 +34,88 @@ export default function Home() {
     blue: false,
   });
 
-  const [userPattern, setUserPattern] = useState([
-    "red",
-    "green",
-    "blue",
-    "yellow",
-    "red",
-    "green",
-    "blue",
-    "yellow",
-    "red",
-    "green",
-    "blue",
-    "yellow",
-    "red",
-    "green",
-    "blue",
-    "yellow",
-    "red",
-    "green",
-    "blue",
-    "yellow",
-    "red",
-    "green",
-    "blue",
-    "yellow",
-    "red",
-    "green",
-    "blue",
-    "yellow",
-    "red",
-    "green",
-    "blue",
-    "yellow",
-  ]);
+  function handleGameStart() {
+    level === 0 ? handleFirstLevel() : handleLevel();
+  }
+
+  function handleFirstLevel() {
+    const newPattern = [
+      COLORS[getRandomInt()],
+      COLORS[getRandomInt()],
+      COLORS[getRandomInt()],
+    ];
+    setLevel(1);
+    setPattern(newPattern);
+    showLevel(newPattern);
+  }
+
+  function handleLevel() {
+    const newPattern = [...pattern, COLORS[getRandomInt()]];
+    setLevel((prev) => prev + 1);
+    setPattern(newPattern);
+    showLevel(newPattern);
+  }
+
+  async function showLevel(currentPattern: LigthButtonColor[]) {
+    setUserPattern([]);
+
+    for (let i = 0; i < currentPattern.length; i++) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setButtonState((prev) => ({ ...prev, [currentPattern[i]]: true }));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setButtonState((prev) => ({ ...prev, [currentPattern[i]]: false }));
+    }
+
+    setGameState(GameState.UserTrying);
+  }
+
+  function checkPattern() {
+    if (userPattern.length === pattern.length) {
+      if (userPattern.join("") === pattern.join("")) {
+        console.log("✅");
+        handleLevel();
+      } else {
+        console.log("❌");
+        setGameState(GameState.Lost);
+      }
+    }
+  }
+
+  function buttonStateOff() {
+    setButtonState({
+      yellow: false,
+      green: false,
+      red: false,
+      blue: false,
+    });
+  }
+
+  async function handleUserClick(color: LigthButtonColor) {
+    setUserPattern((prev) => [...prev, color]);
+
+    buttonStateOff();
+    setButtonState((prev) => ({ ...prev, [color]: true }));
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    buttonStateOff();
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
 
   useEffect(() => {
-    const colors: LigthButtonColor[] = ["red", "green", "yellow", "blue"];
-    const changeButtonStates = async () => {
-      for (const color of colors) {
-        setButtonState((prev) => ({ ...prev, [color]: !prev[color] }));
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        setButtonState((prev) => ({ ...prev, [color]: !prev[color] }));
-      }
-    };
-    changeButtonStates();
-  }, []);
+    if (gameState === GameState.ShowingPattern) {
+      handleGameStart();
+    } else if (gameState === GameState.Lost) {
+      setPattern([]);
+      setUserPattern([]);
+      setLevel(0);
+      setGameState(GameState.Off);
+    }
+  }, [gameState]);
+
+  useEffect(() => {
+    if (gameState === GameState.UserTrying) {
+      checkPattern();
+    }
+  }, [userPattern]);
 
   return (
     <div
@@ -80,10 +124,9 @@ export default function Home() {
       <main className="flex flex-col items-center">
         <div className="flex flex-col items-center justify-center gap-2">
           <h1 className="text-2xl md:text-4xl">Sim🐶n</h1>
-          <p className="md:text-xl">Level {0}</p>
+          <p className="md:text-xl">Level {level}</p>
         </div>
         <div className="flex flex-wrap gap-0.5 mb-5 md:mb-10 mt-5 md:mt-10 h-16 max-w-md">
-          {/* @todo deactivate this when add level selection */}
           {userPattern.map((c, index) => {
             return (
               <div className={`${c}-base w-4 md:w-5 h-4 md:h-5`} key={index} />
@@ -96,26 +139,44 @@ export default function Home() {
               position="tl"
               color="yellow"
               isActive={buttonState["yellow"]}
+              onClick={() =>
+                gameState === GameState.UserTrying && handleUserClick("yellow")
+              }
             />
             <LigthButton
               position="tr"
               color="green"
               isActive={buttonState["green"]}
+              onClick={() =>
+                gameState === GameState.UserTrying && handleUserClick("green")
+              }
             />
             <LigthButton
               position="bl"
               color="blue"
               isActive={buttonState["blue"]}
+              onClick={() =>
+                gameState === GameState.UserTrying && handleUserClick("blue")
+              }
             />
             <LigthButton
               position="br"
               color="red"
               isActive={buttonState["red"]}
+              onClick={() =>
+                gameState === GameState.UserTrying && handleUserClick("red")
+              }
             />
           </div>
           <p className="text-gray-700">Remaining Time 0s</p>
         </div>
-        <button className="bg-slate-300 text-black px-10 py-2 mt-5">
+        <button
+          disabled={gameState !== GameState.Off && gameState !== GameState.Lost}
+          onClick={() => {
+            setGameState(GameState.ShowingPattern);
+          }}
+          className="px-10 py-2 mt-5 bg-slate-300 text-black disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           Start
         </button>
       </main>

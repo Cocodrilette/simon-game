@@ -5,6 +5,6 @@ export function generateRandomColor(): LigthButtonColor {
   return colors[getRandomInt()];
 }
 
-function getRandomInt(max: number = 4) {
+export function getRandomInt(max: number = 4) {
   return Math.floor(Math.random() * max);
 }
