@@ -15,7 +15,7 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-const MAX_LEVEL = 32;
+// const MAX_LEVEL = 32;
 const COLORS: LigthButtonColor[] = ["red", "green", "yellow", "blue"];
 
 export default function Home() {
@@ -35,7 +35,11 @@ export default function Home() {
   });
 
   function handleGameStart() {
-    level === 0 ? handleFirstLevel() : handleLevel();
+    if (level === 0) {
+      handleFirstLevel();
+    } else {
+      handleLevel();
+    }
   }
 
   function handleFirstLevel() {
