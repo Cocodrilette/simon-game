@@ -22,7 +22,7 @@ const COLORS: LigthButtonColor[] = ["red", "green", "yellow", "blue"];
  * @todo Implement this
  * @todo Can be a function of the level
  */
-const TIME = 5000;
+// const TIME = 5000;
 /**
  * Time in ms to show a color button on
  */
