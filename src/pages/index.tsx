@@ -3,6 +3,9 @@ import { GameState, LigthButtonColor } from "@/types";
 import { getRandomInt } from "@/utils";
 import localFont from "next/font/local";
 import { useEffect, useState } from "react";
+import React from "react";
+import useWindowSize from "react-use/lib/useWindowSize";
+import Confetti from "react-confetti";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -39,6 +42,8 @@ export default function Home() {
   const [userPattern, setUserPattern] = useState<LigthButtonColor[]>([]);
   const [pattern, setPattern] = useState<LigthButtonColor[]>([]);
 
+  const [showConfeti, setShowConfeti] = useState(false);
+
   const [buttonState, setButtonState] = useState<{
     [LigthButtonColor: string]: boolean;
   }>({
@@ -47,6 +52,8 @@ export default function Home() {
     red: false,
     blue: false,
   });
+
+  const { width, height } = useWindowSize();
 
   function handleGameStart() {
     if (level === 0) {
@@ -92,9 +99,13 @@ export default function Home() {
       if (userPattern.join("") === pattern.join("")) {
         console.log("✅");
         handleLevel();
+
+        setShowConfeti(true);
+        setTimeout(() => setShowConfeti(false), 2000);
       } else {
         console.log("❌");
         setGameState(GameState.Lost);
+        setShowConfeti(false);
       }
     }
   }
@@ -140,6 +151,9 @@ export default function Home() {
       className={`${geistSans.variable} ${geistMono.variable} grid items-center justify-center min-h-screen p-5 font-[family-name:var(--font-geist-mono)]`}
     >
       <main className="flex flex-col items-center">
+        {showConfeti && (
+          <Confetti width={width} height={height} gravity={0.5} />
+        )}
         <div className="flex flex-col items-center justify-center gap-2">
           <h1 className="text-2xl md:text-4xl">Sim🐶n</h1>
           <p className="md:text-xl">Level {level}</p>
