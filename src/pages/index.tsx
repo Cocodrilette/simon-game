@@ -1,11 +1,9 @@
+import { Confetti } from "@/components/confetti";
 import { LigthButton } from "@/components/ligth-button";
 import { GameState, LigthButtonColor } from "@/types";
 import { getRandomInt } from "@/utils";
 import localFont from "next/font/local";
 import { useEffect, useState } from "react";
-import React from "react";
-import useWindowSize from "react-use/lib/useWindowSize";
-import Confetti from "react-confetti";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -53,8 +51,6 @@ export default function Home() {
     blue: false,
   });
 
-  const { width, height } = useWindowSize();
-
   function handleGameStart() {
     if (level === 0) {
       handleFirstLevel();
@@ -83,6 +79,7 @@ export default function Home() {
 
   async function showLevel(currentPattern: LigthButtonColor[]) {
     setUserPattern([]);
+    await new Promise((resolve) => setTimeout(resolve, WAIT_TIME * 2));
 
     for (let i = 0; i < currentPattern.length; i++) {
       await new Promise((resolve) => setTimeout(resolve, WAIT_TIME));
@@ -151,9 +148,7 @@ export default function Home() {
       className={`${geistSans.variable} ${geistMono.variable} grid items-center justify-center min-h-screen p-5 font-[family-name:var(--font-geist-mono)]`}
     >
       <main className="flex flex-col items-center">
-        {showConfeti && (
-          <Confetti width={width} height={height} gravity={0.5} />
-        )}
+        <Confetti isActive={showConfeti} />
         <div className="flex flex-col items-center justify-center gap-2">
           <h1 className="text-2xl md:text-4xl">Sim🐶n</h1>
           <p className="md:text-xl">Level {level}</p>
